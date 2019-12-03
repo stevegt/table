@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/modood/table"
 	. "github.com/smartystreets/goconvey/convey"
+	. "github.com/stevegt/table"
 )
 
 func TestOutput(t *testing.T) {

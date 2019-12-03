@@ -4,7 +4,7 @@
 package table_test
 
 import (
-	"github.com/modood/table"
+	"github.com/stevegt/table"
 )
 
 type House struct {

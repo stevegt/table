@@ -24,6 +24,8 @@ type bd struct {
 	UR rune // BOX DRAWINGS UP AND RIGHT
 }
 
+type Format map[string]string
+
 var m = map[string]bd{
 	"ascii":       bd{'-', '|', '+', '+', '+', '+', '+', '+', '+', '+', '+'},
 	"box-drawing": bd{'─', '│', '┼', '┴', '┬', '┤', '├', '┐', '┌', '┘', '└'},
@@ -31,7 +33,13 @@ var m = map[string]bd{
 
 // Output formats slice of structs data and writes to standard output.(Using box drawing characters)
 func Output(slice interface{}) {
-	fmt.Println(Table(slice))
+	fmt.Println(Table(slice, Format{}))
+}
+
+// OutputF formats slice of structs data according to map of formats,
+// and writes to standard output.(Using box drawing characters)
+func OutputF(slice interface{}, format Format) {
+	fmt.Println(Table(slice, format))
 }
 
 // OutputA formats slice of structs data and writes to standard output.(Using standard ascii characters)
@@ -40,8 +48,8 @@ func OutputA(slice interface{}) {
 }
 
 // Table formats slice of structs data and returns the resulting string.(Using box drawing characters)
-func Table(slice interface{}) string {
-	coln, colw, rows, err := parse(slice)
+func Table(slice interface{}, format Format) string {
+	coln, colw, rows, err := parse(slice, format)
 	if err != nil {
 		return err.Error()
 	}
@@ -51,7 +59,7 @@ func Table(slice interface{}) string {
 
 // AsciiTable formats slice of structs data and returns the resulting string.(Using standard ascii characters)
 func AsciiTable(slice interface{}) string {
-	coln, colw, rows, err := parse(slice)
+	coln, colw, rows, err := parse(slice, Format{})
 	if err != nil {
 		return err.Error()
 	}
@@ -59,7 +67,7 @@ func AsciiTable(slice interface{}) string {
 	return table
 }
 
-func parse(slice interface{}) (
+func parse(slice interface{}, format Format) (
 	coln []string, // name of columns
 	colw []int, // width of columns
 	rows [][]string, // rows of content
@@ -90,7 +98,11 @@ func parse(slice interface{}) (
 				continue
 			}
 			cn := t.Field(n).Name
-			cv := fmt.Sprintf("%+v", v.FieldByName(cn).Interface())
+			cf, ok := format[cn]
+			if !ok {
+				cf = "%+v"
+			}
+			cv := fmt.Sprintf(cf, v.FieldByName(cn).Interface())
 
 			if i == 0 {
 				coln = append(coln, cn)
