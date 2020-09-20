@@ -33,13 +33,13 @@ var m = map[string]bd{
 
 // Output formats slice of structs data and writes to standard output.(Using box drawing characters)
 func Output(slice interface{}) {
-	fmt.Println(Table(slice, Format{}))
+	fmt.Println(Table(slice))
 }
 
-// OutputF formats slice of structs data according to map of formats,
+// FormattedOutput formats slice of structs data according to map of formats,
 // and writes to standard output.(Using box drawing characters)
-func OutputF(slice interface{}, format Format) {
-	fmt.Println(Table(slice, format))
+func FormattedOutput(slice interface{}, format Format) {
+	fmt.Println(FormattedTable(slice, format))
 }
 
 // OutputA formats slice of structs data and writes to standard output.(Using standard ascii characters)
@@ -48,7 +48,17 @@ func OutputA(slice interface{}) {
 }
 
 // Table formats slice of structs data and returns the resulting string.(Using box drawing characters)
-func Table(slice interface{}, format Format) string {
+func Table(slice interface{}) string {
+	coln, colw, rows, err := parse(slice, Format{})
+	if err != nil {
+		return err.Error()
+	}
+	table := table(coln, colw, rows, m["box-drawing"])
+	return table
+}
+
+// Table formats slice of structs data according to map of formats, and returns the resulting string.(Using box drawing characters)
+func FormattedTable(slice interface{}, format Format) string {
 	coln, colw, rows, err := parse(slice, format)
 	if err != nil {
 		return err.Error()
