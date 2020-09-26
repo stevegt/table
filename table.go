@@ -112,6 +112,11 @@ func parse(slice interface{}, format Format) (
 			if !ok {
 				cf = "%+v"
 			}
+			// skip if column format string is set but empty
+			if len(cf) == 0 {
+				m++
+				continue
+			}
 			cv := fmt.Sprintf(cf, v.FieldByName(cn).Interface())
 
 			if i == 0 {
