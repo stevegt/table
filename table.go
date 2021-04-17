@@ -110,7 +110,9 @@ func parse(slice interface{}, format Format) (
 			cn := t.Field(n).Name
 			cf, ok := format[cn]
 			if !ok {
-				cf = "%+v"
+				// cf = "%+v"
+				m++
+				continue
 			}
 			// skip if column format string is set but empty
 			if len(cf) == 0 {
